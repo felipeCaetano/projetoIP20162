@@ -1,0 +1,41 @@
+from tkinter import *
+from funcoes import *
+produtos={}
+class Janela:
+    def __init__(self,objetoTK):
+
+        #Frame para Menu
+        self.fr1=Frame(objetoTK)
+        self.fr1.pack(side=TOP)
+
+        self.labeTeste1=Label(self.fr1, text="Local para barra de menus")
+        self.labeTeste1.pack()
+
+        #Frame para exibição
+        self.fr2=Frame(objetoTK)
+        self.fr2.pack(side=LEFT)
+        self.labeTeste2=Label(self.fr2, text="Local para exibição")
+        self.labeTeste2.pack()
+
+
+        #Frame para botões
+        self.fr3=Frame(objetoTK)
+        self.fr3.pack(side=RIGHT)
+        self.botao1=Button(self.fr3,text="VENDER",fg="green", height=4, width=20)
+        self.botao1["padx"],self.botao1["pady"]=5,0
+        #self.botao1["command"]=self.vender
+            
+        #self.botao1.focus_force()
+        self.botao1.pack()
+
+        self.botao2=Button(self.fr3,text="CADASTRAR",fg="green", height=4, width=20)
+        self.botao2["padx"],self.botao2["pady"]=5,0
+        self.botao2.pack()
+
+        def vender():
+            iniciar_vendas(produtos)
+        
+objetoTK=Tk()
+Janela(objetoTK)
+objetoTK.mainloop()
+
