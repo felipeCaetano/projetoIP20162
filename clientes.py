@@ -119,30 +119,30 @@ class Pessoa():
     
     #metodos geters
     def getNome(self):
-        pass
+        return self.nome
     def getEndereco(self):
-        pass
+        return self.endereco
     def getNumero(self):
-        pass
+        return self.numero
     def getBairro(self):
-        pass
+        return self.bairro
     def getCidade(self):
-        pass
+        return self.cidade
     def getEstado(self):
-        pass
+        return self.estado
     def getTelefone(self):
-        pass
+        return self.telefone
     def getCelular(self):
-        pass
+        return self.celular
     def getEmail(self):
-        pass
-    def getRG(self):
-        pass
+        return self.email
+    def getNumeroRG(self):
+        return self.RG
     def getCPF(self):
-        pass
+        return self.CPF
     def getCEP(self):
-        pass
-    
+        return self.CEP
+   
     #validadores
     def validaNome(nome):
         n=nome.split()
@@ -155,7 +155,7 @@ class Pessoa():
     def validaEndereco(endereco):
         end=endereco.split()
         for e in end:
-            if not e.isalpha():
+            if not e.isalnum():
                 return "Endereço Inválido"
         else:
             return endereco
@@ -185,29 +185,50 @@ class Pessoa():
             return cidade   
         
     def validaEstado(estado):
-        estados=['Acre','AC','Alagoas', 'AL','Amapá','AP','Amazonas','AM','Bahia',
-      'BA','Ceará','CE','Distrito Federal','DF','Espírito Santo','ES','Goiás',
-      'GO','Maranhão','MA','Mato Grosso','MT','Mato Grosso do Sul','MS','Minas Gerais',
-      'MG','Pará','PA','Paraíba','PB','Paraná','PR','Pernambuco','PE','Piauí','PI',
-      'Rio de Janeiro','RJ','Rio Grande do Norte','RN','Rio Grande do Sul','RS',
-      'Rondônia','RO','Roraima','RR','Santa Catarina','SC','São Paulo','SP','Sergipe',
-      'SE','Tocantins','TO']
+        estados=['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG',
+        'PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
       
         e=estado.split()
         for state in e:
-          if state not in estados:
+          if state.upper() not in estados:
             return "Estado Inválido"
         else:
           return estado
           
     def validaCEP(CEP):
-        pass
+        CEP=CEP.replace("-","")
+        if len(CEP)!=8:
+            return "CEP Inválido"
+        elif CEP.isdigit():
+            return CEP
         
-    def validaTelefone(Telefone):
-        pass
+    def validaTelefone(telefone):
+        telefone=telefone.replace("(","")
+        telefone=telefone.replace(")","")
+        telefone=telefone.replace("-","")
+        
+        if telefone=="":
+            return telefone
+        elif len(telefone)<8:
+            return "Telefone Inválido"
+        elif 8<len(telefone)<=10 and telefone.isdigit():
+            return telefone
         
     def validaCelular(celular):
-        pass
+        celular=celular.replace("(","") 
+        celular=celular.replace(")","")
+        celular=celular.replace("-","")
+        
+        if celular=="":
+            return celular
+        if len(celular)<9:
+            return "Celular Inválido"
+        if len(celular)==9 and celular[0]!='9':
+            return "Celular Inválido"
+        if len(celular)==11 and celular[2]!='9':
+            return "Celular Inválido"
+        else:
+            return celular
         
     def validaEmail(email):
         '''Verificador de email fraco
@@ -217,7 +238,8 @@ class Pessoa():
         if email!="":
             pos=email.find('@')
             if pos>0:
-                if email.find(".com",pos)>0:
+                if email.find(".com")>0:
+                    print(pos)
                     return email
                 else:
                     return "Email Inválido"
