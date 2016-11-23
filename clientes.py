@@ -55,17 +55,16 @@ class Pessoa():
             print("Email Inválido")
             self.email=Pessoa.setEmail(self)   
             
-        self.RG=Pessoa.setRG(self)
-        while self.RG=="RG Inválido":
+        self.rg=Pessoa.set_rg(self)
+        while self.rg==False:
             print("RG Inválido")
-            self.RG=Pessoa.setRG(self)  
+            self.rg=Pessoa.set_rg(self)  
             
-        self.CPF=Pessoa.setCPF(self)
-        while self.CPF=="CPF Inválido":
-            print("CPF Inválido")
-            self.CPF=Pessoa.setCPF(self)  
+        self.cadastro=Pessoa.set_cadastro(self)
+        while self.cadastro==False:
+            print("CPF\CNPJ Inválido")
+            self.cadastro=Pessoa.set_cadastro(self)  
         
-    
     #metodos seters
     def setNome(self):
         nome=input("Nome: ")
@@ -103,19 +102,18 @@ class Pessoa():
         email=input("Email: ")
         self.email=Pessoa.validaEmail(email)
         return self.email
-    def setRG(self):
-        RG=input("RG: ")
-        self.RG=Pessoa.validaRG(RG)
-        return self.RG
-    def setCPF(self):
-        CPF=input("CPF: ")
-        self.CPF=Pessoa.validaCPF(CPF)
-        return self.CPF
+    def set_rg(self):
+        rg=input("RG: ")
+        self.rg=Pessoa.valida_rg(rg)
+        return self.rg
+    def set_cadastro(self):
+        cadastro=input("Cadastro(CPF ou CNPJ): ")
+        self.cadastro=Pessoa.valida_cadastro(cadastro)
+        return self.cadastro
     def setCEP(self):
         CEP=input("CEP: ")
         self.CEP=Pessoa.validaCEP(CEP)
         return self.CEP
-    
     
     #metodos geters
     def getNome(self):
@@ -136,10 +134,10 @@ class Pessoa():
         return self.celular
     def getEmail(self):
         return self.email
-    def getNumeroRG(self):
-        return self.RG
-    def getCPF(self):
-        return self.CPF
+    def get_rg(self):
+        return self.rg
+    def get_cadastro(self):
+        return self.cadastro
     def getCEP(self):
         return self.CEP
    
@@ -239,81 +237,168 @@ class Pessoa():
             pos=email.find('@')
             if pos>0:
                 if email.find(".com")>0:
-                    print(pos)
                     return email
                 else:
                     return "Email Inválido"
             else:
                     return "Email Inválido"
-        #elif email=="":     #o campo pode ser deixado em branco.
-         #   return email
         else:
             return "Email Inválido"
                 
-    def validaRG(RG):
+    def valida_rg(RG):
+        if RG=="":
+            return RG
         if RG!="" and 5<=len(RG)<=7:
             if RG.isdigit():
                 return RG
             else:
-                return "RG Inválido"
+                return False
         else:
-            return "RG Inválido"
-                
-        
-    def validaCPF(CPF):
+            return False
+                 
+    def valida_cadastro(cadastro):
         result=0
-        CPF=CPF.replace("-","") #remove o traço se houver
-        CPF=CPF.replace(".","")
-        if len(CPF)!=11:
-            return "CPF Inválido"   #maior ou menor q 11 n vale
-        a=[int(x) for x in range(2,11)]
-        a.reverse() #primeira parte da vericação
-        for i in range(9):
-            result+=int(CPF[i])*a[i]
-      
-        result=(result*10)%11
-        if result==10:
-            result=0
-        
-        if result==int(CPF[9]):#verificação 1 ok.
-            result=0
-            b=[int(x) for x in range(2,12)]
-            b.reverse()
-            for i in range(10):
-                result+=int(CPF[i])*b[i]
-          
+        # XX.XXX.XXX/YYYY-ZZ
+        cadastro=cadastro.replace("-","") #remove o traço se houver
+        cadastro=cadastro.replace(".","")
+        cadastro=cadastro.replace("/","")
+        if len(cadastro)<11:
+            return False   #maior ou menor q 11 n vale
+        if len(cadastro)==11:
+            a=[int(x) for x in range(2,11)]
+            a.reverse() #primeira parte da vericação
+            for i in range(9):
+                result+=int(cadastro[i])*a[i]
+
             result=(result*10)%11
-            if result==int(CPF[10]): #verificação 2 ok.
-                return CPF
+            if result==10: #se resto da divisão for 10
+                result=0
+
+            if result==int(cadastro[9]):#verificação 1 ok.
+                result=0
+                b=[int(x) for x in range(2,12)]
+                b.reverse()
+                for i in range(10):
+                    result+=int(cadastro[i])*b[i]
+
+                result=(result*10)%11
+                if result==int(cadastro[10]): #verificação 2 ok.
+                    return cadastro
+                else:
+                    return False
             else:
-                return "CPF Inválido"
-        else:
-            return "CPF Inválido"
-    
+                return False
+        elif len(cadastro) == 14:
+            #valida cnpj    11.222.333/0001-XX.
+            lista=[5,4,3,2,9,8,7,6,5,4,3,2]
+            resultado=0
+            for i in range(12):
+                resultado+=lista[i]*int(cadastro[i])
+            resultado%=11
+            
+            if resultado<2:
+                resultado=0
+            else:
+                resultado=11-resultado
+                
+            if resultado==int(cadastro[12]):
+                lista=[6,5,4,3,2,9,8,7,6,5,4,3,2]
+                resultado=0
+                for i in range(13):
+                    resultado+=lista[i]*int(cadastro[i])
+                
+                resultado%=11
+                
+                if resultado<2:
+                    resultado=0
+                else:
+                    resultado=11-resultado
+                    
+                if resultado==int(cadastro[13]):
+                    return cadastro
+                else:
+                    return False
+            else:
+                return False
+                    
     def __str__(self):
         #listaparametros=[self.nome,self.endereco]
         #return listaparametros
         return self.nome
     
 class Cliente(Pessoa):
-    #cliente tem foto
+    
     #cliente tem data de nascimento
-    #cliente tem fax
     def __init__(self):
         Pessoa.__init__(self)
-        self.datanasc=None
-     
+        self.datanasc=Cliente.set_data_nasc(self)
+        while self.datanasc==False:
+            print("Data Inválida")
+            self.datanasc=Cliente.set_data_nasc(self)
 
+    def set_data_nasc(self):
+        data=input("DN(dd/mm/aaaa): ")
+        self.datanasc=Cliente.valida_data(data)
+        return self.datanasc
+    
+    def get_data_nasc(self):
+        return self.datanasc
+    
+    def valida_data(data):
+        data=data.replace("/","")
+        if data=="":
+            return data
+        else:
+            if int(data[0:2])>31:
+                return False
+            if int(data[2:4])>12:
+                return False
+            #TODO:se ano maior q ano atual tb deve retornar False
+            if len(data)==8 and data.isdigit():
+                return data
+            else:
+                return False
+            
+        
 class Fornecedores(Pessoa):
+    
     #fornecedor tem cnpj
-    #fornecedor tem fax
     def __init__(self):
         pass
-class Funcionarios(Pessoa):
-    #funcionÃ¡rio tem data de nascimento
+    
+    
+class Funcionario(Pessoa):
+    
+    #TODO: cliente tem foto
+    
     def __init__(self):
-        pass
+        self.datanasc=Funcionario.set_data_nasc(self)
+        while self.datanasc==False:
+            print("Data Inválida")
+            self.datanasc=Funcionario.set_data_nasc(self)
 
+    def set_data_nasc(self):
+        data=input("DN(dd/mm/aaaa): ")
+        self.datanasc=Funcionario.valida_data(data)
+        return self.datanasc
+    
+    def get_data_nasc(self):
+        return self.datanasc
+    
+    def valida_data(data):
+        data=data.replace("/","")
+        if data=="":
+            return data
+        else:
+            if int(data[0:2])>31:
+                return False
+            if int(data[2:4])>12:
+                return False
+            #TODO:se ano maior q ano atual tb deve retornar False
+            if len(data)==8 and data.isdigit():
+                return data
+            else:
+                return False
 
 pessoa1=Cliente()
-print(pessoa1.email)
+print(pessoa1)
